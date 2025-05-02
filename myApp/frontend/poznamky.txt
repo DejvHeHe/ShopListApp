@@ -1,0 +1,14 @@
+Komponenty:button,formulář,nákupní seznam(dropdown seznam),položky(checkboxy)
+
+3 tlačítka :
+
+1. otevře vytvoření seznamu(bude obsahovat pouze zadání jmena)
+2.otevře vytvoření položky(bude obsahovat pouze zadání jmena)
+3.otevře přidání položky-bude obsahovat zadání jmena , vybrání seznamu(loadne shoplist names), počet položek
+
+dropdown seznam :
+bude obsahovat pole položek(každá položka je komponenta s chckboxem-bude načtena ze seznamu)
+
+Jak progresovat : 
+Spojit frontend s backend a udělat dashboard , což je dropdown a item
+
