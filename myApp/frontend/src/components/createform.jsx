@@ -1,43 +1,55 @@
 import '../App.css';
-import React, { useState, useEffect } from 'react';
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import React, { useState} from 'react';
 
-function CreateForm({ text }) {
-  const [show, setShow] = useState(false);
-  const [inputValue, setInputValue] = useState('');
 
-  useEffect(() => {
-    setShow(true);
-  }, []);
 
-  const handleClose = () => setShow(false);
-
-  const submit = () => {
-    console.log("Submitted value:", inputValue);
-    // You could also pass this value to a parent or save it somewhere
-    setShow(false);
+function CreateForm({ text, onClose,loadData,createFunction}) {
+  const [inputValue, setInput]=useState("")
+  const [labelText,setText]=useState("")
+  
+  
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!inputValue.trim()) return;
+  
+    const data = { name: inputValue };
+  
+    try {
+      if (createFunction) {
+        const result = await createFunction(data);
+  
+        if (result.success) {
+          loadData();
+          onClose();
+        } else {
+          setText(result.message); // zobrazí chybu
+        }
+      } else {
+        console.error("No function passed to createFunction!");
+        setText("Vytvářecí funkce není nastavena.");
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      setText("Neočekávaná chyba při odesílání dat.");
+    }
   };
-
+  
+  
+  
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Body>
-        <p>{text}</p>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={submit}>
-          Potvrdit
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <div className='modalwindow'>
+      <form onSubmit={handleSubmit}>
+      <p>{text}*</p>
+      <input type='text' value={inputValue} onChange={(e) => setInput(e.target.value)} required></input>
+      <button className="formbutton" type='submit'>Potvrdit</button>
+      <button className="formbutton" onClick={onClose}>Zavřít</button>
+      <br></br>
+      {labelText && <label>{labelText}</label>}
+
+      </form>      
+    </div>
+
   );
 }
 

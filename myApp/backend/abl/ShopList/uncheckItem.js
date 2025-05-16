@@ -8,10 +8,10 @@ const listDao = require("../../dao/shopList-DAO");
 const schema = {
   type: "object",
   properties: {
-    name: { type: "string" },
+    ID: { type: "string" },
     shopList:{type:"string"}       
   },
-  required: ["name","shopList"],
+  required: ["ID","shopList"],
   additionalProperties: false,
 };
 async function UncheckItem(req, res) {
@@ -27,8 +27,9 @@ async function UncheckItem(req, res) {
       }
   
       // Najdi seznam podle názvu
-      const shopLists = await listDao.display();
-      const targetList = shopLists.find(list => list.name === item.shopList);
+      const shopListID=item.shopList
+      const targetList = await listDao.get(shopListID);
+      
       if (!targetList) {
         return res.status(404).json({ message: "Seznam nenalezen." });
       }

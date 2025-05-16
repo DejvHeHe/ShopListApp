@@ -1,30 +1,34 @@
 import '../App.css';
-import { fetchShopList } from '../api';
 import React, { useEffect, useState } from 'react';
 import ShopDropdown from './dropdown';
+import Loader from './loading';
 
-function Dashboard() {
-  const [data, setData] = useState([]);
+function Dashboard({ loadData, data }) {
+  const[loading,setLoading]=useState(true)
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const shopData = await fetchShopList();
-        setData(shopData);
-      } catch (error) {
-        console.error('Chyba při načítání dat:', error);
-      }
+  useEffect(() =>{
+    if(data.length>0 || data.loaded)
+    {
+      setLoading(false)
     }
-
-    loadData();
-  }, []);
+  },[data]);
 
   return (
     <div className='dashboard'>
-      {data.map((shop, index) => (
-        <ShopDropdown name={shop.name || 'Neznámý'} items={shop.items || []} />
-
-      ))}
+      {loading ? (<Loader/>):
+      data.length > 0 ? (
+        data.map((shop, index) => (
+          <ShopDropdown
+            key={index}
+            name={shop.name || 'Neznámý'}
+            ID={shop._id}
+            items={shop.items || []}
+            loadData={loadData}
+          />
+        ))
+      ) : (
+        <p>No shops available</p>
+      )}
     </div>
   );
 }

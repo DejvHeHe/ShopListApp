@@ -25,7 +25,7 @@ async function CreateItem(req, res) {
       });
     }   
 
-    const Item = await itemDao.get();
+    const Item = await itemDao.display();
 
     // check for duplicate by name
     const isDuplicate = Item.some((element) => element.name === item.name);

@@ -1,11 +1,9 @@
+require('dotenv').config(); // Load environment variables from .env
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
-require('dotenv').config(); // načte proměnné z .env
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGO_URI;
 
-
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+// Create a MongoClient
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -14,89 +12,123 @@ const client = new MongoClient(uri, {
   }
 });
 
+// Ensure connection before any DB operation
+async function ensureConnection() {
+  if (!client.topology || !client.topology.isConnected()) {
+    await client.connect();
+  }
+}
 
+// Display all shop lists
 async function display() {
   try {
-    const resultDisplay = await client.db("ShopList").collection("shopList").find().toArray(); // převod na pole    
-    return resultDisplay; // můžeš i vrátit, pokud chceš s daty dál pracovat
-    
+    await ensureConnection();
+    const resultDisplay = await client
+      .db("ShopList")
+      .collection("shopList")
+      .find()
+      .toArray();
+    return resultDisplay;
   } catch (err) {
     console.error("Chyba při zobrazování shopList:", err);
   }
 }
+
+// Get one list by ID
+async function get(shopListID) {
+  try {
+    await ensureConnection();
+    const objectId = new ObjectId(shopListID);
+    const resultDisplay = await client
+      .db("ShopList")
+      .collection("shopList")
+      .findOne({ _id: objectId }); // ✅ Fixed syntax
+    return resultDisplay;
+  } catch (err) {
+    console.error("Chyba při získávání shopList:", err);
+  }
+}
+
+// Create a new list
+async function create(list) {
+  try {
+    await ensureConnection();
+    const resultCreate = await client
+      .db("ShopList")
+      .collection("shopList")
+      .insertOne(list);
+    console.log("Inserted document ID:", resultCreate.insertedId);
+    return display(); // Return updated list
+  } catch (err) {
+    console.error("Error inserting document:", err);
+  }
+}
+
+// Add or update item in a list
+// Add or update item in a list
 async function update(item, targetList) {
   try {
+    await ensureConnection();
     const db = client.db("ShopList");
     const collection = db.collection("shopList");
 
-    // Check if item already exists
-    const existingItem = targetList.items.find(i => i.name === item.name);
+    const filter = { _id: targetList._id }; // Use _id for reliable targeting
+    const itemId = typeof item.ID === "string" ? item.ID : String(item.ID);
+
+    // Check if the item already exists in the list by ID
+    const existingItem = targetList.items.find(i => i.ID === itemId);
 
     if (existingItem) {
-      // Update the item's state
-      const filter = { name: targetList.name };
-      const update = {
-        $set: {
-          "items.$[elem].state": false,
+      // Update existing item's state to false
+      await collection.updateOne(
+        filter,
+        {
+          $set: {
+            "items.$[elem].state": false
+          }
+        },
+        {
+          arrayFilters: [{ "elem.ID": itemId }]
         }
-      };
-      const options = {
-        arrayFilters: [{ "elem.name": item.name }]
-      };
-
-      await collection.updateOne(filter, update, options);
+      );
     } else {
       // Add new item to the list
-      const filter = { name: targetList.name };
-      const update = {
-        $push: { items: item },
-      };
-
-      await collection.updateOne(filter, update);
+      await collection.updateOne(
+        filter,
+        {
+          $push: { items: item }
+        }
+      );
     }
 
-    // Now sort the items: true items first, false items last
-    const updatedList = await collection.findOne({ name: targetList.name });
+    // Re-fetch list and sort items: state=true first
+    const updatedList = await collection.findOne(filter);
+
+    if (!updatedList || !updatedList.items) {
+      throw new Error("Aktualizovaný seznam nelze načíst.");
+    }
+
     const sortedItems = [...updatedList.items].sort((a, b) => {
       return (b.state === true) - (a.state === true);
     });
 
-    // Update the sorted array
+    // Apply sorted array
     await collection.updateOne(
-      { name: targetList.name },
+      filter,
       { $set: { items: sortedItems } }
     );
 
-    return display()
+    return updatedList;
   } catch (err) {
-    console.error(err);
+    console.error("Chyba při aktualizaci seznamu:", err);
     throw new Error("Chyba při aktualizaci seznamu");
   }
 }
 
 
-
-
-
-
-
-
-async function create(list)
-{
-  try {
-    
-    const resultCreate= await client.db("ShopList").collection("shopList").insertOne(list)
-    console.log("Inserted document ID:", resultCreate.insertedId);
-    return display()
-    
-  } catch (err) {
-    console.error("Error inserting document:", err);
-  } 
-}
-
 module.exports = {
-    display,
-    create,
-    update
-}
-    
+  display,
+  create,
+  update,
+  get
+};
