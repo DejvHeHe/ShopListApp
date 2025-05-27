@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchItem, addItem } from "../api";
 
-function AddForm({ loadData, onClose, shopList }) {
+function AddForm({ loadData, onClose, shopList}) {
   const [selectedItemId, setSelectedItemId] = useState("");
   const [count, setCount] = useState(1);
   const [items, setItems] = useState([]);
@@ -47,7 +47,8 @@ function AddForm({ loadData, onClose, shopList }) {
   return (
     <div className='modalwindow2'>
       <form onSubmit={handleSubmit}>
-        <p>Vyber položku co chceš přidat:</p>
+      <label>Vyber položku co chceš přidat:</label>
+        
         <select
           value={selectedItemId}
           onChange={(e) => setSelectedItemId(e.target.value)}
@@ -60,8 +61,8 @@ function AddForm({ loadData, onClose, shopList }) {
             </option>
           ))}
         </select>
-
-        <p>Počet:</p>
+        <label>Počet:</label>
+        
         <input
           type="number"
           value={count}
@@ -75,7 +76,7 @@ function AddForm({ loadData, onClose, shopList }) {
         <button className="formbutton" type="button" onClick={onClose}>
           Zavřít
         </button>
-        <br />
+        
         {labelText && <label style={{ color: "black" }}>{labelText}</label>}
       </form>
     </div>

@@ -1,9 +1,9 @@
 import '../App.css'; 
 import React, { useState } from 'react';
-import ItemComponent from './item';
+import ItemComponent from './shoplistitem';
 import AddForm from './addform'; 
 
-function ShopDropdown({ name, items, loadData, data,ID }) {
+function ShopDropdown({ name, items, loadData, data,ID,loadItems }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleToggle = () => setIsOpen(!isOpen);
   const [showForm, setShowForm] = useState(false);
@@ -44,6 +44,7 @@ function ShopDropdown({ name, items, loadData, data,ID }) {
             loadData={loadData}
             onClose={() => setShowForm(false)}
             shopList={ID}
+            loadItems={loadItems}
           />
         </div>
       )}

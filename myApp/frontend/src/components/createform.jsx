@@ -3,7 +3,7 @@ import React, { useState} from 'react';
 
 
 
-function CreateForm({ text, onClose,loadData,createFunction}) {
+function CreateForm({ text, onClose,loadData,createFunction,loadItems}) {
   const [inputValue, setInput]=useState("")
   const [labelText,setText]=useState("")
   
@@ -21,6 +21,7 @@ function CreateForm({ text, onClose,loadData,createFunction}) {
   
         if (result.success) {
           loadData();
+          loadItems();
           onClose();
         } else {
           setText(result.message); // zobrazí chybu
@@ -40,11 +41,12 @@ function CreateForm({ text, onClose,loadData,createFunction}) {
   return (
     <div className='modalwindow'>
       <form onSubmit={handleSubmit}>
-      <p>{text}*</p>
+      
+      <label>{text}*</label>
       <input type='text' value={inputValue} onChange={(e) => setInput(e.target.value)} required></input>
       <button className="formbutton" type='submit'>Potvrdit</button>
       <button className="formbutton" onClick={onClose}>Zavřít</button>
-      <br></br>
+      
       {labelText && <label>{labelText}</label>}
 
       </form>      

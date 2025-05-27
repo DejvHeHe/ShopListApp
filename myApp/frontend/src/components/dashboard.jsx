@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ShopDropdown from './dropdown';
 import Loader from './loading';
 
+
 function Dashboard({ loadData, data }) {
   const[loading,setLoading]=useState(true)
 
@@ -27,7 +28,7 @@ function Dashboard({ loadData, data }) {
           />
         ))
       ) : (
-        <p>No shops available</p>
+        <label>No shops available</label>
       )}
     </div>
   );
