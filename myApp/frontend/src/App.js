@@ -72,7 +72,7 @@ function App() {
         </header>
         <Routes>
             <Route path="/" element={<DashboardRoute loadData={loadData} data={data} />} />
-            <Route path='/items' element={<Items loadData={loadData} dataItems={items}/>}/>
+            <Route path='/items' element={<Items loadData={loadData} dataItems={items} loadItems={loadItems}/>}/>
           </Routes>
         {showForm && (
         <CreateForm

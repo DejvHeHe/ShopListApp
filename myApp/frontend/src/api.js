@@ -108,3 +108,22 @@ export async function addItem(data) {
   }
 }
 
+export async function editItem(data) {
+  try {
+    const response = await fetch("http://localhost:5000/item/edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    // Optional: handle response
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error editing item:", error);
+  }
+}
+
+

@@ -78,10 +78,33 @@ async function uncheck() {
   // Future functionality
 }
 
+
+async function edit(ID, newname) {
+  try {
+    await ensureConnection();
+    const { ObjectId } = require("mongodb");
+
+    const resultEditItem = await client
+      .db("ShopList")
+      .collection("items")
+      .updateOne(
+        { _id: new ObjectId(ID) },  // Convert string ID to ObjectId
+        { $set: { name: newname } }
+      );
+
+    return resultEditItem;
+
+  } catch (err) {
+    console.error("Error editing item:", err);
+  }
+}
+
+
 module.exports = {
   add,
   create,
   get,
   uncheck,
-  display
+  display,
+  edit
 };

@@ -1,2 +1,3 @@
-Přidat chybové hlašky 
-Upravit vzhled
+Přidíní chybových hlášek k edirformu , udělat css a fixnout aby se nedalo otevírat víc formu najednou + aby se hýbali
+Upravit update funkci
+Udělat že když item neexistuje tak aby se vytvořil
