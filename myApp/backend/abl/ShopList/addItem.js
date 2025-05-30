@@ -10,6 +10,7 @@ const schema = {
     ID: { type: "string" },
     shopList: { type: "string" },
     count: { type: "integer" },
+    name: { type: "string" }
   },
   required: ["ID", "shopList"],
   additionalProperties: false,
@@ -19,7 +20,6 @@ async function AddItem(req, res) {
   try {
     let item = req.body;
 
-    // Validate input
     const valid = ajv.validate(schema, item);
     if (!valid) {
       return res.status(400).json({
@@ -29,20 +29,28 @@ async function AddItem(req, res) {
       });
     }
 
-    item.state = true;
-    const ID=item.ID
+    let ID = item.ID;
 
-    // Get item by ID
-    const Item = await itemDao.get(ID);
-    if (!Item) {
-      return res.status(400).json({
-        code: "ItemDoesNotExist",
-        message: `Záznam s ID '${ID}' neexistuje.`,
-      });
+    // Try to get item
+    let dbItem = await itemDao.get(ID);
+
+    // If it doesn't exist, create it and fetch it again
+    if (!dbItem) {
+      const newCreatedItem = await itemDao.create({ name: item.name });
+      ID = newCreatedItem._id;
+      dbItem = await itemDao.get(ID);
     }
-    const shopListID=item.shopList
+
+    // Update item properties
+    dbItem.shopList = item.shopList;
+    dbItem.count = item.count;
+    dbItem.state = true;
+
+    // Ensure item.ID is up to date
+    item.ID = dbItem._id.toString();
+
     // Get target list
-    const targetList = await listDao.get(shopListID);
+    const targetList = await listDao.get(item.shopList);
     if (!targetList) {
       return res.status(404).json({
         code: "shopListNotFound",
@@ -50,20 +58,23 @@ async function AddItem(req, res) {
       });
     }
 
-    // Check for duplicate
-    const dupliciteItem = targetList.items.some(i => i.ID === item.ID);
-    if (dupliciteItem) {
+    // Prevent duplicates
+    const duplicate = targetList.items.some(i => i.ID === item.ID);
+    if (duplicate) {
       return res.status(400).json({
         code: "ItemIsAlreadyAdded",
         message: `Záznam s ID '${item.ID}' je již v seznamu přidán.`,
       });
     }
-    item.name=Item.name
-    // Add item to list
-    const addedItem = await listDao.update(item, targetList);
+
+    dbItem.name = item.name; // optional, to ensure it's fresh
+
+    // Add to list
+    const addedItem = await listDao.update(dbItem, targetList);
     res.json(addedItem);
 
   } catch (e) {
+    console.error("AddItem error:", e);
     res.status(500).json({ error: e.message || "Nastala chyba." });
   }
 }

@@ -72,27 +72,27 @@ async function update(item, targetList) {
     const db = client.db("ShopList");
     const collection = db.collection("shopList");
 
-    const filter = { _id: targetList._id }; // Use _id for reliable targeting
-    const itemId = typeof item.ID === "string" ? item.ID : String(item.ID);
+    const filter = { _id: targetList._id };
+    const itemId = typeof item._id === "object" ? item._id.toString() : item.ID;
 
-    // Check if the item already exists in the list by ID
-    const existingItem = targetList.items.find(i => i.ID === itemId);
+    // Normalize item ID field for matching
+    const existingItemIndex = targetList.items.findIndex(i => i.ID === itemId);
 
-    if (existingItem) {
+    if (existingItemIndex !== -1) {
       // Update existing item's state to false
       await collection.updateOne(
         filter,
         {
           $set: {
-            "items.$[elem].state": false
+            [`items.${existingItemIndex}.state`]: false
           }
-        },
-        {
-          arrayFilters: [{ "elem.ID": itemId }]
         }
       );
     } else {
-      // Add new item to the list
+      // Ensure item has an ID field for insertion
+      item.ID = itemId;
+
+      // Push new item
       await collection.updateOne(
         filter,
         {
@@ -101,10 +101,9 @@ async function update(item, targetList) {
       );
     }
 
-    // Re-fetch list and sort items: state=true first
+    // Re-fetch and sort
     const updatedList = await collection.findOne(filter);
-
-    if (!updatedList || !updatedList.items) {
+    if (!updatedList || !Array.isArray(updatedList.items)) {
       throw new Error("Aktualizovaný seznam nelze načíst.");
     }
 
@@ -112,18 +111,22 @@ async function update(item, targetList) {
       return (b.state === true) - (a.state === true);
     });
 
-    // Apply sorted array
+    // Save sorted array back
     await collection.updateOne(
       filter,
       { $set: { items: sortedItems } }
     );
 
-    return updatedList;
+    return {
+      ...updatedList,
+      items: sortedItems
+    };
   } catch (err) {
     console.error("Chyba při aktualizaci seznamu:", err);
     throw new Error("Chyba při aktualizaci seznamu");
   }
 }
+
 
 
 module.exports = {

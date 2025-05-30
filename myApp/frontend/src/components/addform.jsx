@@ -6,6 +6,9 @@ function AddForm({ loadData, onClose, shopList}) {
   const [count, setCount] = useState(1);
   const [items, setItems] = useState([]);
   const [labelText, setText] = useState("");
+  const [selectedItemName, setSelectedItemName] = useState("");
+
+
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -15,6 +18,7 @@ function AddForm({ loadData, onClose, shopList}) {
         ID: selectedItemId,
         shopList: shopList,
         count: count,
+        name:selectedItemName,
       };
 
       const result = await addItem(data);
@@ -49,18 +53,32 @@ function AddForm({ loadData, onClose, shopList}) {
       <form onSubmit={handleSubmit}>
       <label>Vyber položku co chceš přidat:</label>
         
-        <select
-          value={selectedItemId}
-          onChange={(e) => setSelectedItemId(e.target.value)}
+        <input
+          type="text"
+          list="item-list"
+          value={selectedItemName}
+          onChange={(e) => {
+            const name = e.target.value;
+            setSelectedItemName(name);
+
+            const matchedItem = items.find(item => item.name === name);
+            if (matchedItem) {
+              setSelectedItemId(matchedItem._id); // store internal ID
+            } else {
+              setSelectedItemId(""); // clear if not matched
+            }
+          }}
           required
-        >
+        />
+        <datalist id="item-list">
           <option value="">Vyberte položku*</option>
           {items.map((item) => (
-            <option key={item._id} value={item._id}>
-              {item.name}
-            </option>
+            <option key={item._id} value={item.name} />
           ))}
-        </select>
+        </datalist>
+
+          
+        
         <label>Počet:</label>
         
         <input

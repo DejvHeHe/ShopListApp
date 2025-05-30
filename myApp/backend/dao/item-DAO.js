@@ -62,11 +62,17 @@ async function create(item) {
       .insertOne(item);
 
     console.log("Inserted document ID:", resultCreateItem.insertedId);
-    return resultCreateItem;
+
+    // Fetch and return the full inserted item
+    const newItem = await get(resultCreateItem.insertedId)
+      
+    return newItem;
   } catch (err) {
     console.error("Error inserting document:", err);
+    return null;
   }
 }
+
 
 // Placeholder - currently just logs
 async function add(item) {

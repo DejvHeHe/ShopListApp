@@ -5,6 +5,7 @@ const router = express.Router();
 const CreatedItem= require("../abl/Item/createItem");
 const EditItem=require("../abl/Item/editItem");
 const GetItem=require("../abl/Item/displayItem")
+const DeleteItem=require("../abl/Item/deleteItem")
 
 
 
@@ -12,6 +13,7 @@ const GetItem=require("../abl/Item/displayItem")
 router.post("/create", CreatedItem);
 router.post("/edit",EditItem);
 router.get("/display",GetItem)
+router.get("/delete",DeleteItem)
 
 
 
