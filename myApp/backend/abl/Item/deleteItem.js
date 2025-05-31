@@ -1,7 +1,7 @@
 const Ajv = require("ajv");
 const ajv = new Ajv();
 
-const shopListDao = require("../../dao/shopList-DAO");
+const itemDao = require("../../dao/item-DAO");
 
 
 const schema = {
@@ -12,10 +12,10 @@ const schema = {
   required: ["ID"],
   additionalProperties: false,
 };
-async function DeleteShopList(req,res) {
+async function DeleteItem(req,res) {
   try{
-    shopList=req.body
-    const valid=ajv.validate(schema,shopList)
+    item=req.body
+    const valid=ajv.validate(schema,item)
     if(!valid)
     {
       return res.status(400).json({
@@ -24,17 +24,17 @@ async function DeleteShopList(req,res) {
         validationError: ajv.errors,
       });
     }
-    const exist=await shopListDao.get(shopList.ID)
+    const exist=await itemDao.get(item.ID)
     if(!exist)
     {
       return res.status(400).json({
-        code:"shopListNotFound",
-        message:`Záznam s ID'${shopList.ID}' neexistuje.`
+        code:"itemNotFound",
+        message:`Záznam s ID'${item.ID}' neexistuje.`
       });
 
     }
-    const shopListDeleted= await shopListDao.deleteShopList(shopList);
-    res.json(shopListDeleted);
+    const itemDeleted= await itemDao.deleteItem(item);
+    res.json(itemDeleted);
 
   }
   catch(err)
@@ -44,4 +44,4 @@ async function DeleteShopList(req,res) {
   
     
 }
-module.exports=DeleteShopList;
+module.exports=DeleteItem;

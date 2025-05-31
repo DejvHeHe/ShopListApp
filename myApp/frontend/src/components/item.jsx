@@ -1,6 +1,8 @@
 import '../App.css';
 import { useState } from 'react';
 import EditForm from './editform';
+import DeleteButton from './deletebutton';
+import { deleteItem } from '../api';
 
 function Item({ name,ID,loadItems }) {
   const [showForm, setShowForm] = useState(false);
@@ -18,6 +20,8 @@ function Item({ name,ID,loadItems }) {
       <div className='item'>
         {name}
         <button className='editformbutton' onClick={handleEdit}>Upravit</button>
+        <DeleteButton ID={ID} loadItems={loadItems} deletefunction={deleteItem}/>
+
       </div>
 
       {showForm && (

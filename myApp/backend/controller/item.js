@@ -13,7 +13,7 @@ const DeleteItem=require("../abl/Item/deleteItem")
 router.post("/create", CreatedItem);
 router.post("/edit",EditItem);
 router.get("/display",GetItem)
-router.get("/delete",DeleteItem)
+router.post("/delete",DeleteItem)
 
 
 

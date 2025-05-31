@@ -2,26 +2,34 @@ import '../App.css';
 import React, { useState } from 'react';
 import ItemComponent from './shoplistitem';
 import AddForm from './addform'; 
+import DeleteButton from './deletebutton';
 
-function ShopDropdown({ name, items, loadData, data,ID,loadItems }) {
+import { deleteShopList } from '../api';
+
+function ShopDropdown({ name, items, loadData, data, ID, loadItems }) {
   const [isOpen, setIsOpen] = useState(false);
-  const handleToggle = () => setIsOpen(!isOpen);
   const [showForm, setShowForm] = useState(false);
 
+  const handleToggle = () => setIsOpen(!isOpen);
+
   const handleAddForm = (e) => {
-    e.stopPropagation(); // zabrání zavření při kliknutí na tlačítko
+    e.stopPropagation(); // Prevent closing the dropdown
     setShowForm(true);
   };
 
   return (
     <div className="dropdown-container">
-      <button onClick={handleToggle} className="dropdown-toggle">
+      {/* Replacing button with div to avoid nesting issues */}
+      <div onClick={handleToggle} className="dropdown-toggle">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button className="addbutton" onClick={handleAddForm}>Přidat položku</button>
+          <button className="addbutton" onClick={handleAddForm}>
+            Přidat položku
+          </button>
           <span>{name}</span>
+          <DeleteButton deletefunction={deleteShopList} loadData={loadData} ID={ID} />
         </div>
         <span className="arrow">{isOpen ? '▼' : '►'}</span>
-      </button>
+      </div>
 
       {isOpen && (
         <div>
@@ -38,9 +46,10 @@ function ShopDropdown({ name, items, loadData, data,ID,loadItems }) {
           ))}
         </div>
       )}
+
       {showForm && (
         <div>
-          <AddForm 
+          <AddForm
             loadData={loadData}
             onClose={() => setShowForm(false)}
             shopList={ID}

@@ -126,6 +126,26 @@ async function update(item, targetList) {
     throw new Error("Chyba při aktualizaci seznamu");
   }
 }
+async function deleteShopList(shopList)
+{
+  try
+  {
+    await ensureConnection();
+    const { ObjectId } = require("mongodb");
+    const deletedShopList= await client
+    .db("ShopList")
+    .collection("shopList")
+    .deleteOne({ _id: new ObjectId(shopList.ID) })
+
+    return deletedShopList
+
+  }
+  catch(err)
+  {
+    console.error("Error while deleting shopList",err)
+
+  }
+}
 
 
 
@@ -133,5 +153,6 @@ module.exports = {
   display,
   create,
   update,
-  get
+  get,
+  deleteShopList
 };

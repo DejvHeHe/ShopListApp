@@ -104,6 +104,26 @@ async function edit(ID, newname) {
     console.error("Error editing item:", err);
   }
 }
+async function deleteItem(item)
+{
+  try
+  {
+    await ensureConnection();
+    const { ObjectId } = require("mongodb");
+    const deletedItem= await client
+    .db("ShopList")
+    .collection("items")
+    .deleteOne({ _id: new ObjectId(item.ID) })
+
+    return deletedItem
+
+  }
+  catch(err)
+  {
+    console.error("Error while deleting item",err)
+
+  }
+}
 
 
 module.exports = {
@@ -112,5 +132,6 @@ module.exports = {
   get,
   uncheck,
   display,
-  edit
+  edit,
+  deleteItem
 };
