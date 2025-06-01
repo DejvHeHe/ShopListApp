@@ -39,6 +39,7 @@ async function EditItem(req,res)
             });
         }
         const editedItem= await itemDao.edit(item.ID,item.newname)
+        await shopListDao.syncItemToShopLists(item.ID,item.newname)
         
         res.json(editedItem)
 

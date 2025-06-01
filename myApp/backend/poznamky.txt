@@ -1,1 +1,0 @@
-Udělat update nakupního seznamu a přidat kontrolu zda nátezev itemu existuje

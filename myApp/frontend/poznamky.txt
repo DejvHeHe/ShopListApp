@@ -1,3 +1,3 @@
 Přidíní chybových hlášek k edirformu , udělat css a fixnout aby se nedalo otevírat víc formu najednou + aby se hýbali
-Přidat delete function k oboum entitám
-Upravit update funkci
+Přidání edit pro shoplist
+

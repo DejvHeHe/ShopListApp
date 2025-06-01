@@ -2,6 +2,7 @@ const Ajv = require("ajv");
 const ajv = new Ajv();
 
 const itemDao = require("../../dao/item-DAO");
+const shopListDao=require("../../dao/shopList-DAO")
 
 
 const schema = {
@@ -34,6 +35,7 @@ async function DeleteItem(req,res) {
 
     }
     const itemDeleted= await itemDao.deleteItem(item);
+    await shopListDao.removeItemFromShopLists(item.ID)
     res.json(itemDeleted);
 
   }

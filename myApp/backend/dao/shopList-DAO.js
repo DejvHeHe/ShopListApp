@@ -126,6 +126,55 @@ async function update(item, targetList) {
     throw new Error("Chyba při aktualizaci seznamu");
   }
 }
+async function syncItemToShopLists(ID,name)
+{
+  try
+  {
+    await ensureConnection()
+    const removeItem = await client
+      .db("ShopList")
+      .collection("shopList")
+      .updateMany(
+      { 'items.ID': ID.toString() },
+      {
+        $set: {
+          'items.$[elem].name': name, // Update other fields as needed
+          // add more fields here if item structure grows
+        }
+      },
+      {
+        arrayFilters: [{ 'elem.ID': ID.toString() }]
+      }
+    );
+
+
+
+  }
+  catch(err)
+  {
+    console.error("Chyba při upravě položky",err)
+  }
+
+}
+async function removeItemFromShopLists(itemId) {
+  try {
+    await ensureConnection(); // <- this should be awaited!
+
+    const removeItem = await client
+      .db("ShopList")
+      .collection("shopList")
+      .updateMany(
+        {},
+        { $pull: { items: { ID: itemId.toString() } } }
+      );
+
+    console.log(`Removed item ${itemId} from ${removeItem.modifiedCount} shopLists`);
+  } catch (err) {
+    console.error("Chyba při odstraňování itemu ze shopList:", err);
+    throw new Error("Nepodařilo se odstranit item ze shopList");
+  }
+}
+
 async function deleteShopList(shopList)
 {
   try
@@ -154,5 +203,7 @@ module.exports = {
   create,
   update,
   get,
-  deleteShopList
+  deleteShopList,
+  removeItemFromShopLists,
+  syncItemToShopLists
 };
