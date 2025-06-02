@@ -33,7 +33,7 @@ function Item({ name, count, state, shopList, loadData, ID }) {
 
   return (
     <div className="dropdown-item">
-      <label>
+      
         <input
           type="checkbox"
           checked={!isActive} // checkbox zaškrtnutý pokud NENÍ aktivní (přeškrtnutý)
@@ -44,7 +44,7 @@ function Item({ name, count, state, shopList, loadData, ID }) {
         <span className={isActive ? "normal-text" : "crossed-out"}>
           {name} | Počet: {count || "1"}
         </span>
-      </label>
+      
     </div>
   );
 }

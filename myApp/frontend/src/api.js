@@ -125,6 +125,23 @@ export async function editItem(data) {
     console.error("Error editing item:", error);
   }
 }
+export async function editShopList(data) {
+  try {
+    const response = await fetch("http://localhost:5000/shopList/edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    // Optional: handle response
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error editing shopList:", error);
+  }
+}
 export async function deleteShopList(data)
 {
    try {
@@ -140,7 +157,7 @@ export async function deleteShopList(data)
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Error editing item:", error);
+    console.error("Error editing shopList:", error);
   }
 
 }

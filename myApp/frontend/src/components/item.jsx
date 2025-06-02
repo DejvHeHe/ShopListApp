@@ -1,8 +1,8 @@
 import '../App.css';
 import { useState } from 'react';
-import EditForm from './editform';
+import EditButton from './editbutton';
 import DeleteButton from './deletebutton';
-import { deleteItem } from '../api';
+import { deleteItem, editItem } from '../api';
 
 function Item({ name,ID,loadItems }) {
   const [showForm, setShowForm] = useState(false);
@@ -19,14 +19,14 @@ function Item({ name,ID,loadItems }) {
     <div>
       <div className='item'>
         {name}
-        <button className='editformbutton' onClick={handleEdit}>Upravit</button>
+        <EditButton onClose={handleClose} ID={ID} loadItems={loadItems} editFunction={editItem}  />
         <DeleteButton ID={ID} loadItems={loadItems} deletefunction={deleteItem}/>
 
       </div>
 
-      {showForm && (
-        <EditForm onClose={handleClose} ID={ID} loadItems={loadItems}  />
-      )}
+      
+        
+      
     </div>
   );
 }

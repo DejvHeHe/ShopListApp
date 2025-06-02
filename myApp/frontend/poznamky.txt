@@ -1,3 +1,2 @@
-Přidíní chybových hlášek k edirformu , udělat css a fixnout aby se nedalo otevírat víc formu najednou + aby se hýbali
-Přidání edit pro shoplist
+Fix vzhledu na mobilech 
 

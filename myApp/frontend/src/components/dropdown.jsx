@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import ItemComponent from './shoplistitem';
 import AddForm from './addform'; 
 import DeleteButton from './deletebutton';
+import EditButton from './editbutton'
 
-import { deleteShopList } from '../api';
+
+import { deleteShopList,editShopList } from '../api';
 
 function ShopDropdown({ name, items, loadData, data, ID, loadItems }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,10 +24,11 @@ function ShopDropdown({ name, items, loadData, data, ID, loadItems }) {
       {/* Replacing button with div to avoid nesting issues */}
       <div onClick={handleToggle} className="dropdown-toggle">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <h3>{name}</h3>
           <button className="addbutton" onClick={handleAddForm}>
             Přidat položku
-          </button>
-          <span>{name}</span>
+          </button>          
+          <EditButton ID={ID} loadData={loadData} editFunction={editShopList} />
           <DeleteButton deletefunction={deleteShopList} loadData={loadData} ID={ID} />
         </div>
         <span className="arrow">{isOpen ? '▼' : '►'}</span>

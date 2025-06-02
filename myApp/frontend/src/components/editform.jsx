@@ -1,15 +1,16 @@
 import '../App.css';
 import { useState, useEffect } from 'react';
-import { editItem } from '../api';
 
-function EditForm({onClose,ID,loadItems})
+
+function EditForm({onClose,ID,loadItems,loadData,editFunction})
 {
     const [inputValue, setInput]=useState("")
     const data={ID:ID,newname:inputValue}
     async function handleSubmit()
     {
-        const result = await editItem(data);
+        const result = await editFunction(data);
         loadItems();
+        loadData()
         onClose();
 
     }

@@ -1,7 +1,7 @@
 const Ajv = require("ajv");
 const ajv = new Ajv();
 
-const shopListDao = require("../../dao/shopList-DAO");
+const listDao = require("../../dao/shopList-DAO");
 
 
 const schema = {
@@ -24,7 +24,7 @@ async function DeleteShopList(req,res) {
         validationError: ajv.errors,
       });
     }
-    const exist=await shopListDao.get(shopList.ID)
+    const exist=await listDao.get(shopList.ID)
     if(!exist)
     {
       return res.status(400).json({
@@ -33,7 +33,7 @@ async function DeleteShopList(req,res) {
       });
 
     }
-    const shopListDeleted= await shopListDao.deleteShopList(shopList);
+    const shopListDeleted= await listDao.deleteShopList(shopList);
     res.json(shopListDeleted);
 
   }

@@ -34,10 +34,20 @@ async function EditItem(req,res)
         {
             return res.status(400).json({
                 code: "duplicateEntry",
-                message: `Záznam s ID'${item.ID}' už existuje.`,
+                message: `Záznam s ID'${item.ID}' neexistuje.`,
 
             });
         }
+         const Item = await itemDao.display();
+
+        // check for duplicate by name
+        const isDuplicate = Item.some((element) => element.name === item.newname);
+        if (isDuplicate) {
+          return res.status(400).json({
+            code: "duplicateEntry",
+            message: `Záznam s názvem '${item.newname}' už existuje.`,
+          });
+        }   
         const editedItem= await itemDao.edit(item.ID,item.newname)
         await shopListDao.syncItemToShopLists(item.ID,item.newname)
         

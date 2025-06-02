@@ -15,10 +15,10 @@ function DeleteButton({ deletefunction, loadData,ID,loadItems }) {
     <div>
       <button
         onClick={handleDelete}
-        className="flex items-center gap-2 p-2 bg-red-600 text-white rounded hover:bg-red-700"
+        className="iconbutton"
       >
         <FaTrash />
-        Delete
+       
       </button>
 
       {showForm && (

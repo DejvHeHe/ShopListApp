@@ -195,6 +195,29 @@ async function deleteShopList(shopList)
 
   }
 }
+async function edit(ID,name)
+{
+  try{
+    const { ObjectId } = require("mongodb");
+    await ensureConnection()
+    const editedShopList=await client
+    .db("ShopList")
+    .collection("shopList")
+    .updateOne(
+      { _id: new ObjectId(ID) },
+      {
+        $set:{'name':name}
+      }
+    
+    );
+    return editedShopList
+  }
+  catch(err)
+  {
+    console.error("Error while editting shopList",err)
+  }
+
+}
 
 
 
@@ -205,5 +228,6 @@ module.exports = {
   get,
   deleteShopList,
   removeItemFromShopLists,
-  syncItemToShopLists
+  syncItemToShopLists,
+  edit
 };
