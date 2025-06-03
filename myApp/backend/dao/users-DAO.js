@@ -56,5 +56,53 @@ async function register(user) {
     return { success: false, error: "Something went wrong." };
   }
 }
+async function login(user) {
+  try{
+    await ensureConnection()
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+    const userFound=await find(user.email)
+    const isMatch=await bcrypt.compare(user.password, userFound.passwordHash);
+    if(!isMatch)
+    {
+      return { success: false, error: "You have wrong password" };
+    }
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
-module.exports = { register };
+    return token
+
+  }
+  catch(err)
+  {
+    console.error("Login error",err)
+    return { success: false, error: "Something went wrong." };
+  }
+  
+}
+async function find(email)
+{
+  await ensureConnection()
+  const user=await client
+  .db("ShopList")
+  .collection("users")
+  .findOne({email})
+  if (!user) {
+  
+    return { success: false, error: "Thsi user doesnt exist" };
+  }
+  return user;
+
+
+}
+
+module.exports = { 
+  register,
+  login,
+  find
+
+ };
