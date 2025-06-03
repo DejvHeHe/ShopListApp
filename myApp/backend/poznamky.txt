@@ -1,0 +1,1 @@
+Dodělat login a chckout fce a pak to napojit na již existující funkce co mám na bce

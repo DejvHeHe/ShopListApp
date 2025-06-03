@@ -180,5 +180,23 @@ export async function deleteItem(data)
   }
 
 }
+export async function register(data)
+{
+   try {
+    const response = await fetch("http://localhost:5000/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
+    // Optional: handle response
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error editing item:", error);
+  }
+
+}
 
