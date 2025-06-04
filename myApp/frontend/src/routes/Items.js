@@ -1,8 +1,8 @@
 // routa pro itemy
 import React, { useEffect, useState } from "react";
-import './App.css';
+import '../App.css';
 
-import Item from "./components/item";
+import Item from "../components/item";
 
 function Items({ dataItems,loadItems}) {
   

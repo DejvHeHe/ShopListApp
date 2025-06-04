@@ -6,9 +6,10 @@ import { fetchShopList, createItem as createItemAPI, createList as createListAPI
 import { fetchItem } from "./api";
 import Navbar from './components/navbar';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import DashboardRoute from './DashBoardRoute';
-import Items from './Items';
-//import LoginRoute from './LoginRoute';
+import DashboardRoute from './routes/DashBoardRoute';
+import Items from './routes/Items';
+import RegisterRoute from './routes/RegisterRoute';
+import LoginRoute from './routes/LoginRoute';
 
 
 function App() {
@@ -74,7 +75,8 @@ function App() {
         <Routes>
             <Route path="/" element={<DashboardRoute loadData={loadData} data={data} />} />
             <Route path='/items' element={<Items loadData={loadData} dataItems={items} loadItems={loadItems}/>}/>
-            {/*<Route path='/login' element={<LoginRoute/>}/>*/}
+            <Route path='/register' element={<RegisterRoute/>}/>
+            <Route path='/login' element={<LoginRoute/>}/>
           </Routes>
         {showForm && (
         <CreateForm

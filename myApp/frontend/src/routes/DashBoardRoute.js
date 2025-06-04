@@ -1,8 +1,8 @@
 // DashboardRoute.js
-import './App.css';
+import '../App.css';
 import { useState, useEffect } from 'react';
-import ShopDashboard from './components/dashboard';
-import { fetchShopList } from './api';
+import ShopDashboard from '../components/dashboard';
+
 
 
 function DashboardRoute({loadData,data}) {
