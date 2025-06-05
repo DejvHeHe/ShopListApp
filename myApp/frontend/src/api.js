@@ -1,16 +1,28 @@
-
+const token=localStorage.getItem("token");
 export async function fetchShopList() {
   try {
-    const response = await fetch("http://localhost:5000/shopList/display");
+    const token = localStorage.getItem("token"); // Get JWT from localStorage
+
+    const response = await fetch("http://localhost:5000/shopList/display", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // Attach token here
+      }
+    });
+
     if (!response.ok) throw new Error("Chyba při načítání dat");
+    
     const data = await response.json();
     console.log(data);
     return data.itemList;
+    
   } catch (error) {
     console.error("Chyba:", error);
     throw error;
   }
 }
+
 export async function fetchItem()
 {
   try {
@@ -47,6 +59,7 @@ export async function createList(data) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(data),
     });

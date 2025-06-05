@@ -10,23 +10,21 @@ function LoginRoute()
     const navigate = useNavigate();
     const[email,setEmail]=useState("")
     const[password,setPassword]=useState("")
-    async function handleLogin(e)
-    {
+    async function handleLogin(e) {
         e.preventDefault();
-        const data={
-            email:email,
-            password:password
-        }    
-        const token=await login(data)
-        if(token)
-        {
-            localStorage.setItem("authToken", token);
-            navigate("/")
-        }
+        const data = {
+            email,
+            password
+        };
+        const token = await login(data);
+        if (token) {
+            localStorage.setItem("token", token); // unified key
+            navigate("/");
+        } else {
+            alert("Login failed. Check your credentials.");
+  }
+}
 
-            
-            
-    }
     return(
         <div className="loginroute">
             <h1>Shoplist login</h1>

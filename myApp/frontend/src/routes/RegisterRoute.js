@@ -1,29 +1,42 @@
 import React, { useEffect, useState } from "react";
 import '../App.css';
-import{register} from "../api"
+import{register,login} from "../api"
+import { useNavigate } from 'react-router-dom';
+
 
 function RegisterRoute()
 {
+    const navigate = useNavigate();
     const[email,setEmail]=useState("")
     const[password,setPassword]=useState("")
     const[passwordAgain,setPasswordAgain]=useState("")
 
-    function handleRegister(e)
-    {
+    async function handleRegister(e) {
         e.preventDefault();
-        if(password===passwordAgain)
-        {
-            const data={
-                email:email,
-                password:password
+        if (password === passwordAgain) {
+            const data = {
+            email: email,
+            password: password,
+            };
+
+            try {
+            await register(data);
+            const token = await login(data);
+            if (token) {
+                localStorage.setItem("token", token); // save the token!
+                navigate("/"); // redirect to dashboard
+            } else {
+                alert("Login failed after registration.");
+            }
+            } catch (error) {
+            alert("Registration failed: " + error.message);
             }
 
-            register(data)
-        }
-        else{
-            alert("Hesla se neshodují")
+        } else {
+            alert("Hesla se neshodují");
         }
     }
+
     return(
         <div className="registerroute">
             <h1>Shoplist registrace</h1>

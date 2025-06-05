@@ -20,13 +20,14 @@ async function ensureConnection() {
 }
 
 // Display all shop lists
-async function display() {
+async function display(ownerID) {
   try {
     await ensureConnection();
+    console.log(ownerID)
     const resultDisplay = await client
       .db("ShopList")
       .collection("shopList")
-      .find()
+      .find({ownerID:ownerID})
       .toArray();
     return resultDisplay;
   } catch (err) {

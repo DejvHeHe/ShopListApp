@@ -1,48 +1,25 @@
-//App.js
 import './App.css';
-import { useState,useEffect} from 'react';
-import CreateForm from './components/createform';
-import { fetchShopList, createItem as createItemAPI, createList as createListAPI } from './api';
-import { fetchItem } from "./api";
-import Navbar from './components/navbar';
+import { useState, useEffect } from 'react';
+import { fetchShopList, fetchItem } from './api';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import DashboardRoute from './routes/DashBoardRoute';
 import Items from './routes/Items';
 import RegisterRoute from './routes/RegisterRoute';
 import LoginRoute from './routes/LoginRoute';
-
+import PrivateRoute from './routes/PrivateRoute'; // <-- import it
 
 function App() {
-  const [showForm, setShowForm] = useState(false);
-  const [text, setText] = useState("");
-  const [createFunction, setFunction] = useState(null);
   const [data, setData] = useState([]);
   const [items, setItems] = useState([]);
-  
-    async function loadItems() {
-      try {
-        const fetchedItems = await fetchItem();
-        setItems(fetchedItems);
-      } catch (error) {
-        console.log("Problem with fetching items", error);
-      }
+
+  async function loadItems() {
+    try {
+      const fetchedItems = await fetchItem();
+      setItems(fetchedItems);
+    } catch (error) {
+      console.log("Problem with fetching items", error);
     }
-  
-
-  const handleCreateList = () => {
-    setFunction(() => createListAPI);
-    setText("Zadejte název nakupního seznamu:");
-    setShowForm(true);
-  };
-
-  const handleCreateItem = () => {
-    setFunction(() => createItemAPI);
-    setText("Zadejte název nakupní položky:");
-    setShowForm(true);
-  };
-  
-
-  
+  }
 
   async function loadData() {
     try {
@@ -61,32 +38,27 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <header className="App-header">
-          <Navbar />
-          <h1>ShopList app</h1>
-            <button className="createformbutton" onClick={handleCreateList}>
-          Vytvořit nakupní seznam
-          </button>
-          <button className="createformbutton" onClick={handleCreateItem}>
-            Vytvořit nakupní položku
-          </button>
-          
-        </header>
+        <header className="App-header"></header>
         <Routes>
-            <Route path="/" element={<DashboardRoute loadData={loadData} data={data} />} />
-            <Route path='/items' element={<Items loadData={loadData} dataItems={items} loadItems={loadItems}/>}/>
-            <Route path='/register' element={<RegisterRoute/>}/>
-            <Route path='/login' element={<LoginRoute/>}/>
-          </Routes>
-        {showForm && (
-        <CreateForm
-          text={text}
-          onClose={() => setShowForm(false)}
-          loadData={loadData}
-          createFunction={createFunction}
-          loadItems={loadItems}
-        />
-      )}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <DashboardRoute loadData={loadData} data={data} loadItems={loadItems} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/items"
+            element={
+              <PrivateRoute>
+                <Items loadData={loadData} dataItems={items} loadItems={loadItems} />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/register" element={<RegisterRoute />} />
+          <Route path="/login" element={<LoginRoute />} />
+        </Routes>
       </div>
     </Router>
   );

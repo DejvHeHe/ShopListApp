@@ -17,9 +17,11 @@ function CreateForm({ text, onClose,loadData,createFunction,loadItems}) {
   
     try {
       if (createFunction) {
+        
         const result = await createFunction(data);
   
         if (result.success) {
+          
           loadData();
           loadItems();
           onClose();

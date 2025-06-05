@@ -2,6 +2,7 @@ require('dotenv').config(); // Load env vars
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const bcrypt = require('bcryptjs');
 
+
 const uri = process.env.MONGO_URI;
 
 const client = new MongoClient(uri, {
@@ -59,6 +60,7 @@ async function register(user) {
 async function login(user) {
   try{
     await ensureConnection()
+    const jwt = require('jsonwebtoken');
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(user.password, saltRounds);
     const userFound=await find(user.email)
@@ -67,9 +69,9 @@ async function login(user) {
     {
       return { success: false, error: "You have wrong password" };
     }
-    const jwt = require('jsonwebtoken');
+    
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: userFound._id },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -99,10 +101,23 @@ async function find(email)
 
 
 }
+async function getOwnerID(token) {
+  try {
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded userId:", decoded.userId); // ✅ CORRECT property name
+    return decoded.userId;
+  } catch (err) {
+    console.error('Invalid token:', err);
+    return null;
+  }
+}
+
 
 module.exports = { 
   register,
   login,
-  find
+  find,
+  getOwnerID
 
  };
