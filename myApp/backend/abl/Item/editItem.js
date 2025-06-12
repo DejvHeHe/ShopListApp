@@ -3,6 +3,7 @@ const ajv = new Ajv();
 
 const itemDao = require("../../dao/item-DAO");
 const shopListDao = require("../../dao/shopList-DAO");
+const userDao=require("../../dao/users-DAO");
 
 
 const schema = {
@@ -29,7 +30,13 @@ async function EditItem(req,res)
             });
 
         }
-        editItem=itemDao.get(item.ID)
+        const authHeader = req.headers['authorization'];
+                if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                  return res.status(401).json({ error: "Missing or invalid token" });
+                }
+        const token = authHeader.split(" ")[1]; // removes 'Bearer '
+        const ownerID = await userDao.getOwnerID(token);
+        editItem=itemDao.get(item.ID,ownerID)
         if(!editItem)
         {
             return res.status(400).json({

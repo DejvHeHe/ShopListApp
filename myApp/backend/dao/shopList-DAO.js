@@ -29,6 +29,7 @@ async function display(ownerID) {
       .collection("shopList")
       .find({ownerID:ownerID})
       .toArray();
+      
     return resultDisplay;
   } catch (err) {
     console.error("Chyba při zobrazování shopList:", err);
@@ -36,15 +37,16 @@ async function display(ownerID) {
 }
 
 // Get one list by ID
-async function get(shopListID) {
+async function get(shopListID,ownerID) {
   try {
     await ensureConnection();
     const objectId = new ObjectId(shopListID);
-    const resultDisplay = await client
+    const resultGet = await client
       .db("ShopList")
       .collection("shopList")
-      .findOne({ _id: objectId }); // ✅ Fixed syntax
-    return resultDisplay;
+      .findOne({ _id: objectId, ownerID:ownerID}); // ✅ Fixed syntax
+    console.log(resultGet)
+    return resultGet;
   } catch (err) {
     console.error("Chyba při získávání shopList:", err);
   }
@@ -74,10 +76,12 @@ async function update(item, targetList) {
     const collection = db.collection("shopList");
 
     const filter = { _id: targetList._id };
-    const itemId = typeof item._id === "object" ? item._id.toString() : item.ID;
+    const itemId = item._id?.toString(); // Use only _id
 
-    // Normalize item ID field for matching
-    const existingItemIndex = targetList.items.findIndex(i => i.ID === itemId);
+    // Normalize for matching
+    const existingItemIndex = targetList.items.findIndex(
+      i => i._id?.toString() === itemId
+    );
 
     if (existingItemIndex !== -1) {
       // Update existing item's state to false
@@ -90,14 +94,20 @@ async function update(item, targetList) {
         }
       );
     } else {
-      // Ensure item has an ID field for insertion
-      item.ID = itemId;
+      // Push new item without introducing 'ID' field
+      const { _id, name, count, state } = item;
 
-      // Push new item
       await collection.updateOne(
         filter,
         {
-          $push: { items: item }
+          $push: {
+            items: {
+              _id,
+              name,
+              count,
+              state
+            }
+          }
         }
       );
     }
@@ -127,6 +137,7 @@ async function update(item, targetList) {
     throw new Error("Chyba při aktualizaci seznamu");
   }
 }
+
 async function syncItemToShopLists(ID,name)
 {
   try

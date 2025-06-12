@@ -3,6 +3,7 @@ const ajv = new Ajv();
 
 const itemDao = require("../../dao/item-DAO");
 const listDao = require("../../dao/shopList-DAO");
+const userDao=require("../../dao/users-DAO")
 
 const schema = {
   type: "object",
@@ -28,17 +29,24 @@ async function AddItem(req, res) {
         validationError: ajv.errors,
       });
     }
+    const authHeader = req.headers['authorization'];
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return res.status(401).json({ error: "Missing or invalid token" });
+        }
+    const token = authHeader.split(" ")[1]; // removes 'Bearer '
+    const ownerID = await userDao.getOwnerID(token);
 
     let ID = item.ID;
 
     // Try to get item
-    let dbItem = await itemDao.get(ID);
+    let dbItem = await itemDao.get(ID,ownerID);
 
     // If it doesn't exist, create it and fetch it again
     if (!dbItem) {
-      const newCreatedItem = await itemDao.create({ name: item.name });
+      const newCreatedItem = await itemDao.create({ name: item.name ,ownerID:ownerID});
       ID = newCreatedItem._id;
-      dbItem = await itemDao.get(ID);
+     
+      dbItem = await itemDao.get(ID,ownerID);
     }
 
     // Update item properties
@@ -50,7 +58,7 @@ async function AddItem(req, res) {
     item.ID = dbItem._id.toString();
 
     // Get target list
-    const targetList = await listDao.get(item.shopList);
+    const targetList = await listDao.get(item.shopList,ownerID);
     if (!targetList) {
       return res.status(404).json({
         code: "shopListNotFound",

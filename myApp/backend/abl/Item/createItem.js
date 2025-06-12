@@ -2,7 +2,7 @@ const Ajv = require("ajv");
 const ajv = new Ajv();
 
 const itemDao = require("../../dao/item-DAO");
-
+const userDao=require("../../dao/users-DAO");
 
 const schema = {
   type: "object",
@@ -23,9 +23,16 @@ async function CreateItem(req, res) {
         category: "dtoIn is not valid",
         validationError: ajv.errors,
       });
-    }   
+    }
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: "Missing or invalid token" });
+    }
+    const token = authHeader.split(" ")[1]; // removes 'Bearer '
+    const ownerID = await userDao.getOwnerID(token); 
+    item.ownerID=ownerID  
 
-    const Item = await itemDao.display();
+    const Item = await itemDao.display(ownerID);
 
     // check for duplicate by name
     const isDuplicate = Item.some((element) => element.name === item.name);

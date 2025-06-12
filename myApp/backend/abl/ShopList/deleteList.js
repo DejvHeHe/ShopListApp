@@ -2,6 +2,7 @@ const Ajv = require("ajv");
 const ajv = new Ajv();
 
 const listDao = require("../../dao/shopList-DAO");
+const userDao=require("../../dao/users-DAO")
 
 
 const schema = {
@@ -24,7 +25,15 @@ async function DeleteShopList(req,res) {
         validationError: ajv.errors,
       });
     }
-    const exist=await listDao.get(shopList.ID)
+    const authHeader = req.headers['authorization'];
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return res.status(401).json({ error: "Missing or invalid token" });
+        }
+    const token = authHeader.split(" ")[1]; // removes 'Bearer '
+    const ownerID = await userDao.getOwnerID(token);
+
+
+    const exist=await listDao.get(shopList.ID,ownerID)
     if(!exist)
     {
       return res.status(400).json({

@@ -3,6 +3,7 @@ const ajv = new Ajv();
 
 
 const listDao = require("../../dao/shopList-DAO");
+const userDao=require("../../dao/users-DAO")
 
 
 const schema = {
@@ -29,16 +30,25 @@ async function EditShopList(req,res)
             });
 
         }
-        editshopList=listDao.get(shopList.ID)
+        const authHeader = req.headers['authorization'];
+                if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                  return res.status(401).json({ error: "Missing or invalid token" });
+                }
+        const token = authHeader.split(" ")[1]; // removes 'Bearer '
+        const ownerID = await userDao.getOwnerID(token);
+        const editshopList=await listDao.get(shopList.ID,ownerID)
+        
         if(!editshopList)
         {
+          
             return res.status(400).json({
-                code: "duplicateEntry",
+                code: "DoesNotExist",
                 message: `Záznam s ID'${shopList.ID}' neexistuje.`,
 
             });
         }
-        const ShopList = await listDao.display();
+        
+        const ShopList = await listDao.display(ownerID);
         
             // check for duplicate by name
             const isDuplicate = ShopList.some((element) => element.name === shopList.newname);

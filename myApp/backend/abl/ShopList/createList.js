@@ -37,10 +37,11 @@ async function CreateList(req, res) {
     list.ownerID=ownerID
     
     list.items=[]
-    const ShopList = await listDao.display();
+    const ShopList = await listDao.display(list.ownerID);
 
     // check for duplicate by name
     const isDuplicate = ShopList.some((element) => element.name === list.name);
+    
     if (isDuplicate) {
       return res.status(400).json({
         code: "duplicateEntry",

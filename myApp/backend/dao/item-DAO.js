@@ -19,13 +19,13 @@ async function ensureConnection() {
 }
 
 // Display all items
-async function display() {
+async function display(ownerID) {
   try {
     await ensureConnection(); // Ensure DB is connected
     const resultDisplayItem = await client
       .db("ShopList")
       .collection("items")
-      .find()
+      .find({ownerID:ownerID})
       .toArray();
     return resultDisplayItem;
   } catch (err) {
@@ -34,7 +34,7 @@ async function display() {
 }
 
 // Get one item by ID
-async function get(ID) {
+async function get(ID,ownerID) {
   try {
     await ensureConnection();
     console.log("Looking for item with ID:", ID);
@@ -43,7 +43,7 @@ async function get(ID) {
     const resultDisplayItem = await client
       .db("ShopList")
       .collection("items")
-      .findOne({ _id: objectId });
+      .findOne({ _id: objectId ,ownerID:ownerID });
 
     console.log("Result:", resultDisplayItem);
     return resultDisplayItem;
@@ -64,7 +64,8 @@ async function create(item) {
     console.log("Inserted document ID:", resultCreateItem.insertedId);
 
     // Fetch and return the full inserted item
-    const newItem = await get(resultCreateItem.insertedId)
+    const newItem = await get(resultCreateItem.insertedId,item.ownerID)
+    
       
     return newItem;
   } catch (err) {
