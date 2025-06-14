@@ -44,7 +44,7 @@ async function DeleteItem(req,res) {
     }
     
     const itemDeleted= await itemDao.deleteItem(item);
-    await shopListDao.removeItemFromShopLists(item.ID)
+    await shopListDao.removeItemFromShopLists(item.ID,ownerID)
     res.json(itemDeleted);
 
   }

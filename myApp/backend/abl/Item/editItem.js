@@ -45,7 +45,7 @@ async function EditItem(req,res)
 
             });
         }
-         const Item = await itemDao.display();
+         const Item = await itemDao.display(ownerID);
 
         // check for duplicate by name
         const isDuplicate = Item.some((element) => element.name === item.newname);
@@ -56,7 +56,7 @@ async function EditItem(req,res)
           });
         }   
         const editedItem= await itemDao.edit(item.ID,item.newname)
-        await shopListDao.syncItemToShopLists(item.ID,item.newname)
+        await shopListDao.syncItemToShopLists(item.ID,item.newname,ownerID)
         
         res.json(editedItem)
 

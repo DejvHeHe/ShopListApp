@@ -26,8 +26,10 @@ async function Login(req,res)
 
             });
         }
-        const loginUser=await usersDao.login(user)
-        res.json(loginUser)
+        const token=await usersDao.login(user)
+        res.status(200).json({ token }); // ✅ Proper JSON format
+
+
 
 
 

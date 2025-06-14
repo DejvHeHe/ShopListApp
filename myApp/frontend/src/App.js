@@ -56,8 +56,8 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/register" element={<RegisterRoute />} />
-          <Route path="/login" element={<LoginRoute />} />
+          <Route path="/register" element={<RegisterRoute loadData={loadData}/>} />
+          <Route path="/login" element={<LoginRoute loadData={loadData}/>} />
         </Routes>
       </div>
     </Router>

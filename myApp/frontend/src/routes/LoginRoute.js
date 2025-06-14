@@ -20,10 +20,11 @@ function LoginRoute()
         if (token) {
             localStorage.setItem("token", token); // unified key
             navigate("/");
+            
         } else {
             alert("Login failed. Check your credentials.");
-  }
-}
+        }
+    }
 
     return(
         <div className="loginroute">

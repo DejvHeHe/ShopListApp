@@ -138,54 +138,57 @@ async function update(item, targetList) {
   }
 }
 
-async function syncItemToShopLists(ID,name)
-{
-  try
-  {
-    await ensureConnection()
-    const removeItem = await client
-      .db("ShopList")
-      .collection("shopList")
-      .updateMany(
-      { 'items.ID': ID.toString() },
-      {
-        $set: {
-          'items.$[elem].name': name, // Update other fields as needed
-          // add more fields here if item structure grows
-        }
-      },
-      {
-        arrayFilters: [{ 'elem.ID': ID.toString() }]
-      }
-    );
-
-
-
-  }
-  catch(err)
-  {
-    console.error("Chyba při upravě položky",err)
-  }
-
-}
-async function removeItemFromShopLists(itemId) {
+async function syncItemToShopLists(ID, name, ownerID) {
   try {
-    await ensureConnection(); // <- this should be awaited!
+    await ensureConnection();
 
-    const removeItem = await client
+    
+
+    const result = await client
       .db("ShopList")
       .collection("shopList")
       .updateMany(
-        {},
-        { $pull: { items: { ID: itemId.toString() } } }
+        {
+          ownerID: ownerID,
+          'items._id': new ObjectId(ID)
+        },
+        {
+          $set: {
+            'items.$[elem].name': name
+          }
+        },
+        {
+          arrayFilters: [{ 'elem._id': new ObjectId(ID) }]
+        }
       );
 
-    console.log(`Removed item ${itemId} from ${removeItem.modifiedCount} shopLists`);
+    console.log(`Updated ${result.modifiedCount} lists`);
+    return result;
+  } catch (err) {
+    console.error("Chyba při upravě položky", err);
+  }
+}
+
+async function removeItemFromShopLists(itemId, ownerID) {
+  try {
+    await ensureConnection();
+
+    const result = await client
+      .db("ShopList")
+      .collection("shopList")
+      .updateMany(
+        { ownerID: ownerID },
+        { $pull: { items: { _id: new ObjectId(itemId) } } }
+      );
+
+    console.log(`Removed item ${itemId} from ${result.modifiedCount} shopLists`);
+    return result;
   } catch (err) {
     console.error("Chyba při odstraňování itemu ze shopList:", err);
     throw new Error("Nepodařilo se odstranit item ze shopList");
   }
 }
+
 
 async function deleteShopList(shopList)
 {

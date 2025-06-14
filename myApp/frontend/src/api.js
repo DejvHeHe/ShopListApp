@@ -1,7 +1,8 @@
-const token = localStorage.getItem("token");
+// api.js
 
 export async function fetchShopList() {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/shopList/display", {
       method: "GET",
       headers: {
@@ -13,7 +14,6 @@ export async function fetchShopList() {
     if (!response.ok) throw new Error("Chyba při načítání dat");
 
     const data = await response.json();
-    console.log(data);
     return data.itemList;
 
   } catch (error) {
@@ -24,6 +24,7 @@ export async function fetchShopList() {
 
 export async function fetchItem() {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/item/display", {
       method: "GET",
       headers: {
@@ -33,8 +34,8 @@ export async function fetchItem() {
     });
 
     if (!response.ok) throw new Error("Chyba při načítání dat");
+
     const data = await response.json();
-    console.log(data);
     return data.itemList;
   } catch (error) {
     console.error("Chyba:", error);
@@ -44,6 +45,7 @@ export async function fetchItem() {
 
 export async function uncheck(data) {
   try {
+    const token = localStorage.getItem("token");
     await fetch("http://localhost:5000/shopList/uncheck", {
       method: "POST",
       headers: {
@@ -60,6 +62,7 @@ export async function uncheck(data) {
 
 export async function createList(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/shopList/create", {
       method: "POST",
       headers: {
@@ -83,6 +86,7 @@ export async function createList(data) {
 
 export async function createItem(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/item/create", {
       method: "POST",
       headers: {
@@ -99,13 +103,14 @@ export async function createItem(data) {
 
     return { success: true };
   } catch (error) {
-    console.error("Error creating list:", error);
+    console.error("Error creating item:", error);
     return { success: false, message: "Položka s tímto názvem již existuje." };
   }
 }
 
 export async function addItem(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/shopList/add", {
       method: "POST",
       headers: {
@@ -122,13 +127,14 @@ export async function addItem(data) {
 
     return { success: true };
   } catch (error) {
-    console.error("Error creating list:", error);
+    console.error("Error adding item:", error);
     return { success: false, message: "Položka s tímto názvem už v seznamu je" };
   }
 }
 
 export async function editItem(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/item/edit", {
       method: "POST",
       headers: {
@@ -138,8 +144,7 @@ export async function editItem(data) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("Error editing item:", error);
   }
@@ -147,6 +152,7 @@ export async function editItem(data) {
 
 export async function editShopList(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/shopList/edit", {
       method: "POST",
       headers: {
@@ -156,8 +162,7 @@ export async function editShopList(data) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("Error editing shopList:", error);
   }
@@ -165,6 +170,7 @@ export async function editShopList(data) {
 
 export async function deleteShopList(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/shopList/delete", {
       method: "POST",
       headers: {
@@ -174,8 +180,7 @@ export async function deleteShopList(data) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("Error deleting shopList:", error);
   }
@@ -183,6 +188,7 @@ export async function deleteShopList(data) {
 
 export async function deleteItem(data) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:5000/item/delete", {
       method: "POST",
       headers: {
@@ -192,8 +198,7 @@ export async function deleteItem(data) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("Error deleting item:", error);
   }
@@ -209,8 +214,7 @@ export async function register(data) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("Error during registration:", error);
   }
@@ -226,9 +230,17 @@ export async function login(data) {
       body: JSON.stringify(data),
     });
 
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Login failed:", errorResponse.message || response.statusText);
+      return null;
+    }
+
     const result = await response.json();
-    return result;
+    return result.token;
+    
   } catch (error) {
     console.error("Error during login:", error);
+    return null;
   }
 }

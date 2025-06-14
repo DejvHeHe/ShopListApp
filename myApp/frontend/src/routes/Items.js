@@ -5,9 +5,14 @@ import '../App.css';
 import Item from "../components/item";
 import Header from "../components/header";
 
+
 function Items({ dataItems,loadItems,loadData}) {
-  
-  
+  useEffect(() => {
+    
+      loadItems(); // Make sure this fetches user-specific data
+    
+  },[]); // re-run when `user` changes
+
 
  
 
