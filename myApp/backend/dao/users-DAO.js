@@ -95,7 +95,7 @@ async function find(email)
   .findOne({email})
   if (!user) {
   
-    return { success: false, error: "Thsi user doesnt exist" };
+    return { success: false, error: "This user doesnt exist" };
   }
   return user;
 

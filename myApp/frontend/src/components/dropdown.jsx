@@ -40,10 +40,10 @@ function ShopDropdown({ name, items, loadData, data, ID, loadItems }) {
             <ItemComponent
               key={index}
               name={item.name}
-              ID={item.ID}
+              ID={item._id}
               count={item.count}
               state={item.state}
-              shopList={item.shopList}
+              shopList={ID}
               loadData={loadData}
             />
           ))}

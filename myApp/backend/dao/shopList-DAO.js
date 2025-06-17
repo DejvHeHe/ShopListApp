@@ -42,9 +42,16 @@ async function get(shopListID,ownerID) {
     await ensureConnection();
     const objectId = new ObjectId(shopListID);
     const resultGet = await client
-      .db("ShopList")
-      .collection("shopList")
-      .findOne({ _id: objectId, ownerID:ownerID}); // ✅ Fixed syntax
+    .db("ShopList")
+    .collection("shopList")
+    .findOne({
+      _id: objectId,
+      $or: [
+        { ownerID: ownerID },
+        { sharedTo: new ObjectId(ownerID) }
+      ]
+    });
+
     console.log(resultGet)
     return resultGet;
   } catch (err) {
@@ -195,7 +202,7 @@ async function deleteShopList(shopList)
   try
   {
     await ensureConnection();
-    const { ObjectId } = require("mongodb");
+    
     const deletedShopList= await client
     .db("ShopList")
     .collection("shopList")
@@ -213,7 +220,7 @@ async function deleteShopList(shopList)
 async function edit(ID,name)
 {
   try{
-    const { ObjectId } = require("mongodb");
+    
     await ensureConnection()
     const editedShopList=await client
     .db("ShopList")
@@ -233,6 +240,45 @@ async function edit(ID,name)
   }
 
 }
+async function share(shopList,user,ownerID)
+{
+  try{
+    await ensureConnection();
+    const sharedShopList = await client
+    .db("ShopList")
+    .collection("shopList")
+    .updateOne(
+      { _id: new ObjectId(shopList), ownerID: ownerID },
+      { $addToSet: { sharedTo: new ObjectId(user) } }
+    );
+    return sharedShopList;
+
+
+  }
+  catch(err)
+  {
+    console.error("Error while sharing",err)
+  }
+
+
+}
+async function viewSharedList(ownerID)
+{
+  try {
+    await ensureConnection();
+    
+    const resultDisplay = await client
+      .db("ShopList")
+      .collection("shopList")
+      .find({sharedTo:new ObjectId(ownerID)})
+      .toArray();
+      
+    return resultDisplay;
+  } catch (err) {
+    console.error("Chyba při zobrazování shopList:", err);
+  }
+
+}
 
 
 
@@ -244,5 +290,7 @@ module.exports = {
   deleteShopList,
   removeItemFromShopLists,
   syncItemToShopLists,
-  edit
+  edit,
+  share,
+  viewSharedList
 };
