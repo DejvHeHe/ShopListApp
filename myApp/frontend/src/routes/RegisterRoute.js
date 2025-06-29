@@ -23,7 +23,6 @@ function RegisterRoute()
             await register(data);
             const token = await login(data);
             if (token) {
-                localStorage.setItem("token", token); // save the token!
                 navigate("/"); // redirect to dashboard
             } else {
                 alert("Login failed after registration.");

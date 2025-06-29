@@ -63,7 +63,7 @@ async function login(user) {
     const jwt = require('jsonwebtoken');
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(user.password, saltRounds);
-    const userFound=await find(user.email)
+    const userFound=await findByEmail(user.email)
     const isMatch=await bcrypt.compare(user.password, userFound.passwordHash);
     if(!isMatch)
     {
@@ -86,7 +86,7 @@ async function login(user) {
   }
   
 }
-async function find(email)
+async function findByEmail(email)//find by email
 {
   await ensureConnection()
   const user=await client
@@ -100,6 +100,27 @@ async function find(email)
   return user;
 
 
+}
+async function findById(id) {
+  await ensureConnection();
+
+  let objectId;
+  try {
+    objectId = typeof id === "string" ? new ObjectId(id) : id; // Use as-is if already ObjectId
+  } catch (e) {
+    return { success: false, error: "Invalid user ID format" };
+  }
+
+  const user = await client
+    .db("ShopList")
+    .collection("users")
+    .findOne({ _id: objectId });
+
+  if (!user) {
+    return { success: false, error: "This user doesn't exist" };
+  }
+
+  return user.email;
 }
 async function getOwnerID(token) {
   try {
@@ -117,7 +138,8 @@ async function getOwnerID(token) {
 module.exports = { 
   register,
   login,
-  find,
+  findByEmail,
+  findById,
   getOwnerID
 
  };

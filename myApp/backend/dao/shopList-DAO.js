@@ -262,6 +262,22 @@ async function share(shopList,user,ownerID)
 
 
 }
+async function unshare(shopList, user, ownerID) {
+  try {
+    await ensureConnection();
+    const result = await client
+      .db("ShopList")
+      .collection("shopList")
+      .updateOne(
+        { _id: new ObjectId(shopList), ownerID: ownerID },
+        { $pull: { sharedTo: new ObjectId(user) } }
+      );
+    return result;
+  } catch (err) {
+    console.error("Error while unsharing", err);
+  }
+}
+
 async function viewSharedList(ownerID)
 {
   try {
@@ -292,5 +308,6 @@ module.exports = {
   syncItemToShopLists,
   edit,
   share,
+  unshare,
   viewSharedList
 };

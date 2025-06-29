@@ -16,7 +16,7 @@ const schema = {
   additionalProperties: false,
 };
 
-async function ShareShopList(req,res)
+async function UnshareShopList(req,res)
 {
     try{
         const user=req.body
@@ -51,7 +51,7 @@ async function ShareShopList(req,res)
             message:"Tento nakupní seznam neexistuje"
         })
     }
-    const sharedList= await listDao.share(user.shopList,userExist._id,ownerID)
+    const sharedList= await listDao.unshare(user.shopList,userExist._id,ownerID)
     return res.json(sharedList)
 
     }
@@ -63,4 +63,4 @@ async function ShareShopList(req,res)
 
 
 }
-module.exports=ShareShopList;
+module.exports=UnshareShopList;

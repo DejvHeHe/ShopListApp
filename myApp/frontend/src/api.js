@@ -21,6 +21,27 @@ export async function fetchShopList() {
     throw error;
   }
 }
+export async function fetchShared() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:5000/shopList/viewshared", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error("Chyba při načítání dat");
+
+    const data = await response.json();
+    return data.itemList;
+
+  } catch (error) {
+    console.error("Chyba:", error);
+    throw error;
+  }
+}
 
 export async function fetchItem() {
   try {
@@ -237,10 +258,19 @@ export async function login(data) {
     }
 
     const result = await response.json();
-    return result.token;
-    
+
+    // ✅ Ensure you're saving only the token string
+    if (typeof result.token === "string") {
+      localStorage.setItem("token", result.token);
+      return result.token;
+    } else {
+      console.error("Login result.token is not a string:", result.token);
+      return null;
+    }
+
   } catch (error) {
     console.error("Error during login:", error);
     return null;
   }
 }
+

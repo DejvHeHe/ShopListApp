@@ -30,9 +30,6 @@ async function Login(req,res)
         res.status(200).json({ token }); // ✅ Proper JSON format
 
 
-
-
-
     }
     catch(e)
     {
