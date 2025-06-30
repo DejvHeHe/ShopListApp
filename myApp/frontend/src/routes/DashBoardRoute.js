@@ -24,9 +24,9 @@ function DashboardRoute({ loadData, data, loadItems }) {
       <header>
         <Header loadData={loadData} loadItems={loadItems} />
       </header>
-      <ShopDashboard data={data} loadData={loadData} />
+      <ShopDashboard data={data} loadData={loadData} owner={true} />
       <h2>Sdílené nakupní seznamy</h2>
-      <ShopDashboard data={shared} loadData={loadShared}/>
+      <ShopDashboard data={shared} loadData={loadShared} owner={false}/>
     </div>
   );
 }

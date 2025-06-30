@@ -2,13 +2,12 @@ import '../App.css';
 import React, { useState } from 'react';
 import ItemComponent from './shoplistitem';
 import AddForm from './addform'; 
-import DeleteButton from './deletebutton';
-import EditButton from './editbutton'
+import OptionButton from './optionbutton';
 
 
-import { deleteShopList,editShopList } from '../api';
 
-function ShopDropdown({ name, items, loadData, data, ID, loadItems }) {
+
+function ShopDropdown({ name, items, loadData, data, ID, loadItems, owner}) {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
@@ -27,11 +26,15 @@ function ShopDropdown({ name, items, loadData, data, ID, loadItems }) {
           <h3>{name}</h3>
           <button className="addbutton" onClick={handleAddForm}>
             Přidat položku
-          </button>          
-          <EditButton ID={ID} loadData={loadData} editFunction={editShopList} />
-          <DeleteButton deletefunction={deleteShopList} loadData={loadData} ID={ID} />
+          </button>
+          {owner && (
+            <OptionButton ID={ID} loadData={loadData} />
+          )}
+
+                  
+          
         </div>
-        <span className="arrow">{isOpen ? '▼' : '►'}</span>
+        
       </div>
 
       {isOpen && (

@@ -44,7 +44,7 @@ function RegisterRoute()
                 <input type="email"placeholder="E-mailová adresa" onChange={(e) => setEmail(e.target.value)}required></input>
                 <input type="password" placeholder="Heslo" value={password} onChange={(e) => setPassword(e.target.value)} required></input>
                 <input type="password" placeholder="Heslo znovu"value={passwordAgain} onChange={(e) => setPasswordAgain(e.target.value)} required></input>
-                <button type="submit">Potvrdit</button>                
+                <button className="formbutton" type="submit">Potvrdit</button>                
                 <label>
                     <a href="/login">Přihlásit se k existujícímu učtu</a>
 

@@ -39,7 +39,7 @@ function LoginRoute() {
                     onChange={(e) => setPassword(e.target.value)} 
                     required 
                 />
-                <button type="submit">Potvrdit</button>                
+                <button  className="formbutton"type="submit">Potvrdit</button>                
                 <label>
                     <a href="/register">Vytvořit nový účet</a>
                 </label>

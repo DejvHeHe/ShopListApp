@@ -22,7 +22,7 @@ router.post("/edit",EditShopLIst);
 router.post("/share",ShareShopList);
 router.post("/unshare",UnshareList);
 router.get("/viewshared",ViewSharedList);
-router.get("/viewsharedto",ViewSharedTo);
+router.post("/viewsharedto",ViewSharedTo);
 
 
 module.exports = router;

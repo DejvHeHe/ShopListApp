@@ -1,10 +1,10 @@
 import '../App.css';
 import React, { useEffect, useState } from 'react';
-import ShopDropdown from './dropdown';
+import ShopDropdown from './shoplist';
 import Loader from './loading';
 
 
-function Dashboard({ loadData, data }) {
+function Dashboard({ loadData, data,owner }) {
   const[loading,setLoading]=useState(true)
 
   useEffect(() =>{
@@ -25,6 +25,7 @@ function Dashboard({ loadData, data }) {
             ID={shop._id}
             items={shop.items || []}
             loadData={loadData}
+            owner={owner}
           />
         ))
       ) : (

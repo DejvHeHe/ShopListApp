@@ -42,6 +42,37 @@ export async function fetchShared() {
     throw error;
   }
 }
+export async function viewSharedTo(data) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:5000/shopList/viewsharedto", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data),  // { ID: "..." }
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Chyba při načítání dat: ${errorText}`);
+    }
+
+    // Since the backend returns an array directly, just parse it
+    const emailsArray = await response.json();
+
+    // Always ensure an array is returned
+    return Array.isArray(emailsArray) ? emailsArray : [];
+
+  } catch (error) {
+    console.error("Chyba:", error);
+    return [];
+  }
+}
+
+
+
 
 export async function fetchItem() {
   try {
@@ -77,6 +108,22 @@ export async function uncheck(data) {
     });
   } catch (error) {
     console.error("Error unchecking item:", error);
+    throw error;
+  }
+}
+export async function unshare(data) {
+  try {
+    const token = localStorage.getItem("token");
+    await fetch("http://localhost:5000/shopList/unshare", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error("Error unsharing shoplist:", error);
     throw error;
   }
 }
@@ -271,6 +318,22 @@ export async function login(data) {
   } catch (error) {
     console.error("Error during login:", error);
     return null;
+  }
+}
+export async function share(data) {
+  try {
+    const token = localStorage.getItem("token");
+    await fetch("http://localhost:5000/shopList/share", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error("Error sharing:", error);
+    throw error;
   }
 }
 
